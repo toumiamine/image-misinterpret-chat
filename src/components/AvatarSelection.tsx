@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { 
   Carousel, 
   CarouselContent, 
@@ -31,39 +30,48 @@ const AvatarSelection: React.FC = () => {
         Choose Your Wrong Explanation Expert
       </h2>
       
-      <div>
-        <Carousel className="w-full max-w-3xl mx-auto">
-          <CarouselContent>
-            {avatars.map((avatar) => (
-              <CarouselItem key={avatar.id} className="md:basis-1/2 lg:basis-1/3 p-2">
+      <Carousel className="w-full max-w-3xl mx-auto">
+        <CarouselContent>
+          {avatars.map((avatar) => (
+            <CarouselItem key={avatar.id} className="md:basis-1/3 lg:basis-1/3 flex justify-center">
+              <div className="flex flex-col items-center">
                 <div 
-                  className={`
-                    h-full flex flex-col items-center p-6 rounded-xl shadow-md cursor-pointer transition-all
-                    ${selectedAvatar?.id === avatar.id 
-                      ? 'bg-gradient-to-br from-violet-100 to-blue-100 ring-2 ring-app-purple transform scale-110' 
-                      : 'bg-gradient-to-br from-gray-50 to-white hover:bg-gradient-to-br hover:from-violet-50 hover:to-blue-50'
-                    }
-                  `}
                   onClick={() => handleAvatarSelect(avatar)}
+                  className="cursor-pointer flex flex-col items-center"
                 >
-                  <div className="mb-4 text-4xl">{avatar.emoji}</div>
-                  <Avatar className={`mb-4 bg-gradient-to-br from-app-purple to-app-blue bg-opacity-20 ${
-                    selectedAvatar?.id === avatar.id ? 'w-28 h-28' : 'w-20 h-20'
-                  }`}>
-                    <AvatarFallback>
+                  <div className="text-4xl mb-2">{avatar.emoji}</div>
+                  <Avatar 
+                    className={`
+                      ${selectedAvatar?.id === avatar.id ? 'w-36 h-36 ring-4 ring-app-purple' : 'w-24 h-24 hover:ring-2 hover:ring-app-blue'}
+                      transition-all duration-300 mb-3
+                    `}
+                  >
+                    <AvatarFallback 
+                      className="bg-gradient-to-br from-app-purple to-app-blue text-white"
+                    >
                       {avatarIcons[avatar.id as keyof typeof avatarIcons]}
                     </AvatarFallback>
                   </Avatar>
-                  <h3 className="text-lg font-bold text-center mb-2">{avatar.name}</h3>
-                  <p className="text-sm text-center text-gray-600">{avatar.description}</p>
+                  <h3 className={`
+                    font-bold text-center transition-all duration-300
+                    ${selectedAvatar?.id === avatar.id ? 'text-lg text-app-purple' : 'text-md text-gray-700'}
+                  `}>
+                    {avatar.name}
+                  </h3>
+                  <p className={`
+                    text-center text-sm max-w-[180px] mt-1 transition-all duration-300
+                    ${selectedAvatar?.id === avatar.id ? 'text-gray-700' : 'text-gray-500'} 
+                  `}>
+                    {avatar.description}
+                  </p>
                 </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="-left-6 sm:-left-12" />
-          <CarouselNext className="-right-6 sm:-right-12" />
-        </Carousel>
-      </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="-left-6 sm:-left-12" />
+        <CarouselNext className="-right-6 sm:-right-12" />
+      </Carousel>
     </div>
   );
 };
