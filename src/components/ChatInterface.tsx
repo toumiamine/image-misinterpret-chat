@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +14,10 @@ interface Message {
 
 interface ChatInterfaceProps {
   images: string[];
+  selectedAvatar: string;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, selectedAvatar }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",

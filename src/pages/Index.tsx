@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import ImageUploader from "@/components/ImageUploader";
 import WrongExplanation from "@/components/WrongExplanation";
 import ChatInterface from "@/components/ChatInterface";
+import AvatarSelection from "@/components/AvatarSelection";
+import { useAvatar } from "@/contexts/AvatarContext";
 
 // Sample wrong explanations - one for each possible image
 const wrongExplanationSamples = [
@@ -14,9 +16,10 @@ const wrongExplanationSamples = [
 ];
 
 const Index = () => {
-  const [stage, setStage] = useState<"upload" | "explanation" | "chat">("upload");
+  const [stage, setStage] = useState<"upload" | "explanation" | "avatar" | "chat">("upload");
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [explanations, setExplanations] = useState<string[]>([]);
+  const { selectedAvatar } = useAvatar();
 
   const handleImagesUploaded = (images: string[]) => {
     setUploadedImages(images);
@@ -30,7 +33,11 @@ const Index = () => {
     setStage("explanation");
   };
 
-  const handleStartChat = () => {
+  const handleStartAvatarSelection = () => {
+    setStage("avatar");
+  };
+
+  const handleAvatarSelected = () => {
     setStage("chat");
   };
 
@@ -56,17 +63,28 @@ const Index = () => {
             <WrongExplanation 
               images={uploadedImages} 
               explanations={explanations} 
-              onStartChat={handleStartChat} 
+              onStartChat={handleStartAvatarSelection} 
             />
           )}
 
+          {stage === "avatar" && (
+            <AvatarSelection onSelectAvatar={handleAvatarSelected} />
+          )}
+
           {stage === "chat" && (
-            <ChatInterface images={uploadedImages} />
+            <ChatInterface 
+              images={uploadedImages}
+            />
           )}
         </main>
 
         <footer className="text-center mt-16 text-sm text-gray-500">
           <p>Upload 1-3 images and get deliberately wrong explanations</p>
+          {selectedAvatar && (
+            <p className="mt-1">
+              Current Expert: {selectedAvatar.emoji} {selectedAvatar.name}
+            </p>
+          )}
         </footer>
       </div>
     </div>
