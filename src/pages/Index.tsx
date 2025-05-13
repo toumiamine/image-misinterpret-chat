@@ -16,7 +16,7 @@ const wrongExplanationSamples = [
 ];
 
 const Index = () => {
-  const [stage, setStage] = useState<"upload" | "explanation" | "avatar" | "chat">("upload");
+  const [stage, setStage] = useState<"upload" | "explanation" | "chat">("upload");
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [explanations, setExplanations] = useState<string[]>([]);
   const { selectedAvatar } = useAvatar();
@@ -33,12 +33,13 @@ const Index = () => {
     setStage("explanation");
   };
 
-  const handleStartAvatarSelection = () => {
-    setStage("avatar");
-  };
-
-  const handleAvatarSelected = () => {
-    setStage("chat");
+  const handleStartChat = () => {
+    if (selectedAvatar) {
+      setStage("chat");
+    } else {
+      // Show a toast or alert that an avatar must be selected
+      console.warn("Please select an avatar before starting chat");
+    }
   };
 
   return (
@@ -56,19 +57,18 @@ const Index = () => {
 
         <main>
           {stage === "upload" && (
-            <ImageUploader onImagesUploaded={handleImagesUploaded} />
+            <>
+              <AvatarSelection />
+              <ImageUploader onImagesUploaded={handleImagesUploaded} />
+            </>
           )}
 
           {stage === "explanation" && (
             <WrongExplanation 
               images={uploadedImages} 
               explanations={explanations} 
-              onStartChat={handleStartAvatarSelection} 
+              onStartChat={handleStartChat} 
             />
-          )}
-
-          {stage === "avatar" && (
-            <AvatarSelection onSelectAvatar={handleAvatarSelected} />
           )}
 
           {stage === "chat" && (
