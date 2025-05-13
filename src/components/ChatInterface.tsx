@@ -1,9 +1,11 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useAvatar } from "@/contexts/AvatarContext";
 
 interface Message {
   id: string;
@@ -14,14 +16,14 @@ interface Message {
 
 interface ChatInterfaceProps {
   images: string[];
-  selectedAvatar: string;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, selectedAvatar }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
+  const { selectedAvatar } = useAvatar();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
-      text: "Hello! I'm your image chat assistant. Feel free to ask me anything about your images, but remember - my explanations might be hilariously wrong!",
+      text: `Hello! I'm your image chat assistant${selectedAvatar ? ` (${selectedAvatar.name})` : ''}. Feel free to ask me anything about your images, but remember - my explanations might be hilariously wrong!`,
       sender: "ai",
       timestamp: new Date(),
     },
@@ -85,7 +87,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, selectedAvatar })
       <div className="bg-gradient-to-r from-app-blue to-app-purple p-4 text-white">
         <div className="flex items-center">
           <MessageCircle className="mr-2" size={24} />
-          <h2 className="font-bold">Wrong Explanations Chat</h2>
+          <h2 className="font-bold">
+            {selectedAvatar ? `${selectedAvatar.emoji} ${selectedAvatar.name}` : "Wrong Explanations Chat"}
+          </h2>
         </div>
       </div>
       
