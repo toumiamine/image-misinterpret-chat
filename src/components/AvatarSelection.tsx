@@ -15,9 +15,9 @@ const AvatarSelection: React.FC = () => {
   const { avatars, selectAvatar, selectedAvatar } = useAvatar();
   
   const avatarIcons = {
-    "drunk-professor": <Smile className="w-8 h-8 text-app-purple" />,
-    "food-critic": <User className="w-8 h-8 text-app-blue" />,
-    "ai-assistant": <Frown className="w-8 h-8 text-app-teal" />
+    "drunk-professor": <Smile className="w-8 h-8 text-[#36c]" />,
+    "food-critic": <User className="w-8 h-8 text-[#36c]" />,
+    "ai-assistant": <Frown className="w-8 h-8 text-[#36c]" />
   };
 
   const handleAvatarSelect = (avatar: typeof avatars[0]) => {
@@ -25,11 +25,7 @@ const AvatarSelection: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-8">
-      <h2 className="text-2xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-app-purple to-app-blue">
-        Choose Your Wrong Explanation Expert
-      </h2>
-      
+    <div className="w-full mx-auto">
       <Carousel className="w-full max-w-3xl mx-auto">
         <CarouselContent>
           {avatars.map((avatar) => (
@@ -42,19 +38,19 @@ const AvatarSelection: React.FC = () => {
                   <div className="text-4xl mb-2">{avatar.emoji}</div>
                   <Avatar 
                     className={`
-                      ${selectedAvatar?.id === avatar.id ? 'w-36 h-36 ring-4 ring-app-purple' : 'w-24 h-24 hover:ring-2 hover:ring-app-blue'}
+                      ${selectedAvatar?.id === avatar.id ? 'w-36 h-36 ring-2 ring-[#36c]' : 'w-24 h-24 hover:ring-1 hover:ring-[#72a7e0]'}
                       transition-all duration-300 mb-3
                     `}
                   >
                     <AvatarFallback 
-                      className="bg-gradient-to-br from-app-purple to-app-blue text-white"
+                      className="bg-[#f8f9fa] text-[#36c]"
                     >
                       {avatarIcons[avatar.id as keyof typeof avatarIcons]}
                     </AvatarFallback>
                   </Avatar>
                   <h3 className={`
-                    font-bold text-center transition-all duration-300
-                    ${selectedAvatar?.id === avatar.id ? 'text-lg text-app-purple' : 'text-md text-gray-700'}
+                    font-normal text-center transition-all duration-300
+                    ${selectedAvatar?.id === avatar.id ? 'text-lg text-[#36c]' : 'text-md text-gray-700'}
                   `}>
                     {avatar.name}
                   </h3>

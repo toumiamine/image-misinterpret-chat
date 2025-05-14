@@ -43,13 +43,13 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-violet-50 to-blue-50 py-12 px-4">
-      <div className="container mx-auto">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-app-purple via-app-blue to-app-teal">
+    <div className="min-h-screen bg-white py-4 px-4">
+      <div className="container mx-auto max-w-5xl">
+        <header className="text-center mb-8 border-b border-gray-300 pb-4">
+          <h1 className="text-3xl font-normal mb-2 text-[#000000]">
             Wrong Image Explanations
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm">
             Upload your images and our AI will provide hilariously wrong explanations,
             then chat with it for even more absurdity!
           </p>
@@ -57,10 +57,17 @@ const Index = () => {
 
         <main>
           {stage === "upload" && (
-            <>
-              <AvatarSelection />
-              <ImageUploader onImagesUploaded={handleImagesUploaded} />
-            </>
+            <div className="w-full">
+              <div className="mb-8">
+                <h2 className="wiki-heading text-xl mb-4">Select Your Wrong Explanation Expert</h2>
+                <AvatarSelection />
+              </div>
+              
+              <div className="mt-6">
+                <h2 className="wiki-heading text-xl mb-4">Upload Images</h2>
+                <ImageUploader onImagesUploaded={handleImagesUploaded} />
+              </div>
+            </div>
           )}
 
           {stage === "explanation" && (
@@ -78,7 +85,7 @@ const Index = () => {
           )}
         </main>
 
-        <footer className="text-center mt-16 text-sm text-gray-500">
+        <footer className="text-center mt-10 pt-4 text-xs text-gray-500 border-t border-gray-300">
           <p>Upload 1-3 images and get deliberately wrong explanations</p>
           {selectedAvatar && (
             <p className="mt-1">

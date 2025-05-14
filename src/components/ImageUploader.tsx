@@ -89,12 +89,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUploaded }) => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full mx-auto">
       <div
         className={cn(
-          "border-2 border-dashed rounded-lg p-8 transition-all",
-          dragActive ? "border-app-purple bg-violet-50" : "border-gray-300",
-          selectedFiles.length > 0 ? "border-app-teal" : ""
+          "border rounded-sm p-4 transition-all",
+          dragActive ? "border-[#36c] bg-[#eaf3ff]" : "border-gray-300",
+          selectedFiles.length > 0 ? "border-[#36c]" : ""
         )}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -102,8 +102,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUploaded }) => {
         onDrop={handleDrop}
       >
         <div className="flex flex-col items-center justify-center space-y-4">
-          <Upload size={48} className={cn("text-gray-400", dragActive ? "text-app-purple" : "")} />
-          <h3 className="text-xl font-medium">
+          <Upload size={48} className={cn("text-gray-400", dragActive ? "text-[#36c]" : "")} />
+          <h3 className="text-lg font-normal">
             {dragActive ? "Drop images here" : "Upload your images"}
           </h3>
           <p className="text-sm text-gray-500 text-center">
@@ -112,7 +112,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUploaded }) => {
           <Button 
             variant="outline" 
             onClick={handleButtonClick}
-            className="mt-2"
+            className="mt-2 border-[#a2a9b1] text-[#36c] hover:bg-[#eaf3ff]"
           >
             Select Files
           </Button>
@@ -129,10 +129,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUploaded }) => {
 
       {selectedFiles.length > 0 && (
         <div className="mt-6">
-          <h4 className="text-lg font-medium mb-3">Selected Images ({selectedFiles.length}/3)</h4>
+          <h4 className="text-lg font-normal mb-3 wiki-heading">Selected Images ({selectedFiles.length}/3)</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {previewUrls.map((url, index) => (
-              <div key={index} className="relative rounded-lg overflow-hidden border border-gray-200 group">
+              <div key={index} className="relative border border-gray-300 group">
                 <img
                   src={url}
                   alt={`Preview ${index + 1}`}
@@ -150,7 +150,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUploaded }) => {
           <div className="mt-6 text-center">
             <Button 
               onClick={handleUploadImages}
-              className="bg-gradient-to-r from-app-purple to-app-blue text-white hover:opacity-90 transition-opacity"
+              className="bg-[#36c] text-white hover:bg-[#447ff5] transition-colors"
             >
               Get Wrong Explanations
             </Button>

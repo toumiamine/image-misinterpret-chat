@@ -82,12 +82,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
   };
 
   return (
-    <div className="flex flex-col h-[600px] w-full max-w-4xl mx-auto border rounded-lg shadow-md bg-white overflow-hidden">
+    <div className="flex flex-col h-[600px] w-full mx-auto border rounded-sm shadow-sm bg-white overflow-hidden">
       {/* Chat header */}
-      <div className="bg-gradient-to-r from-app-blue to-app-purple p-4 text-white">
+      <div className="bg-[#f8f9fa] p-3 border-b border-gray-300">
         <div className="flex items-center">
-          <MessageCircle className="mr-2" size={24} />
-          <h2 className="font-bold">
+          <MessageCircle className="mr-2" size={20} />
+          <h2 className="font-normal">
             {selectedAvatar ? `${selectedAvatar.emoji} ${selectedAvatar.name}` : "Wrong Explanations Chat"}
           </h2>
         </div>
@@ -95,13 +95,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
       
       {/* Image thumbnails */}
       {images.length > 0 && (
-        <div className="flex gap-2 p-2 bg-gray-50 border-b overflow-x-auto">
+        <div className="flex gap-2 p-2 bg-[#f8f9fa] border-b border-gray-300 overflow-x-auto">
           {images.map((imageUrl, index) => (
             <img
               key={index}
               src={imageUrl}
               alt={`Thumbnail ${index + 1}`}
-              className="h-14 w-14 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+              className="h-12 w-12 object-cover border border-gray-300 cursor-pointer hover:border-[#36c] transition-colors"
               onClick={() => toast.info(`Discussing image ${index + 1}`)}
             />
           ))}
@@ -109,7 +109,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
       )}
       
       {/* Messages area */}
-      <div className="flex-grow p-4 overflow-y-auto bg-gray-50">
+      <div className="flex-grow p-4 overflow-y-auto bg-white">
         <div className="space-y-4">
           {messages.map((message) => (
             <div
@@ -121,18 +121,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
             >
               <div
                 className={cn(
-                  "max-w-[80%] rounded-lg p-4",
+                  "max-w-[80%] rounded-sm p-3",
                   message.sender === "user"
-                    ? "bg-app-blue text-white rounded-br-none"
-                    : "bg-white border border-gray-200 rounded-bl-none"
+                    ? "bg-[#eaecf0] text-gray-800"
+                    : "bg-[#eaf3ff] text-gray-800 border border-[#c8ccd1]"
                 )}
               >
                 <p>{message.text}</p>
                 <div
-                  className={cn(
-                    "text-xs mt-1",
-                    message.sender === "user" ? "text-blue-100" : "text-gray-400"
-                  )}
+                  className="text-xs mt-1 text-gray-500"
                 >
                   {message.timestamp.toLocaleTimeString([], {
                     hour: "2-digit",
@@ -145,11 +142,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
           
           {isTyping && (
             <div className="flex justify-start">
-              <div className="bg-white border border-gray-200 rounded-lg rounded-bl-none p-4 max-w-[80%]">
+              <div className="bg-[#eaf3ff] border border-[#c8ccd1] rounded-sm p-3 max-w-[80%]">
                 <div className="flex space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                  <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                  <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "300ms" }}></div>
                 </div>
               </div>
             </div>
@@ -159,15 +156,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
       </div>
       
       {/* Input area */}
-      <form onSubmit={handleSendMessage} className="p-4 border-t bg-white">
+      <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-300 bg-[#f8f9fa]">
         <div className="flex gap-2">
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Type your message..."
-            className="flex-grow"
+            className="flex-grow border-gray-300"
           />
-          <Button type="submit" disabled={!inputValue.trim()}>
+          <Button 
+            type="submit" 
+            disabled={!inputValue.trim()}
+            className="bg-[#36c] hover:bg-[#447ff5] text-white"
+          >
             Send
           </Button>
         </div>
