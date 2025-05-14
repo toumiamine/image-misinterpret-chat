@@ -2,10 +2,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Volume2, VolumeOff, Eye, Toggle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAvatar } from "@/contexts/AvatarContext";
+import { Switch } from "@/components/ui/switch";
 
 interface Message {
   id: string;
@@ -31,6 +32,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [voiceOnly, setVoiceOnly] = useState(false);
+  const [factTwisterEnabled, setFactTwisterEnabled] = useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -78,18 +81,55 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
       
       setMessages((prev) => [...prev, aiMessage]);
       setIsTyping(false);
+
+      // If voice mode is enabled, we would trigger voice playback here
+      if (voiceOnly) {
+        toast.info("🔊 Playing voice response");
+        // Here we would integrate with ElevenLabs to play the voice
+      }
     }, 1500);
+  };
+
+  const toggleVoiceOnly = () => {
+    setVoiceOnly(!voiceOnly);
+    toast.info(voiceOnly ? "Text mode enabled" : "Voice-only mode enabled");
+  };
+
+  const toggleFactTwister = () => {
+    setFactTwisterEnabled(!factTwisterEnabled);
+    toast.info(factTwisterEnabled ? "Fact Twister disabled" : "Fact Twister enabled");
   };
 
   return (
     <div className="flex flex-col h-[600px] w-full mx-auto border rounded-sm shadow-sm bg-white overflow-hidden">
       {/* Chat header */}
       <div className="bg-[#f8f9fa] p-3 border-b border-gray-300">
-        <div className="flex items-center">
-          <MessageCircle className="mr-2" size={20} />
-          <h2 className="font-normal">
-            {selectedAvatar ? `${selectedAvatar.emoji} ${selectedAvatar.name}` : "Wrong Explanations Chat"}
-          </h2>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <MessageCircle className="mr-2" size={20} />
+            <h2 className="font-normal">
+              {selectedAvatar ? `${selectedAvatar.emoji} ${selectedAvatar.name}` : "Wrong Explanations Chat"}
+            </h2>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-700">Fact Twister</span>
+              <Switch 
+                checked={factTwisterEnabled} 
+                onCheckedChange={toggleFactTwister}
+                className="bg-gray-300 data-[state=checked]:bg-[#8B5CF6]"
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 text-sm"
+              onClick={toggleVoiceOnly}
+            >
+              {voiceOnly ? <VolumeOff size={16} /> : <Volume2 size={16} />}
+              {voiceOnly ? "Show Text" : "Voice Only"}
+            </Button>
+          </div>
         </div>
       </div>
       
@@ -116,7 +156,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
               key={message.id}
               className={cn(
                 "flex",
-                message.sender === "user" ? "justify-end" : "justify-start"
+                message.sender === "user" ? "justify-end" : "justify-start",
+                voiceOnly && message.sender === "ai" ? "hidden" : ""
               )}
             >
               <div
@@ -151,6 +192,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
               </div>
             </div>
           )}
+          
+          {voiceOnly && messages.some(m => m.sender === "ai") && (
+            <div className="flex justify-center items-center p-4">
+              <div className="text-center p-4 bg-[#eaf3ff] border border-[#c8ccd1] rounded-sm">
+                <Volume2 className="mx-auto mb-2" size={24} />
+                <p className="text-sm">Voice-only mode enabled</p>
+                <p className="text-xs text-gray-500 mt-1">The AI's responses are being played as audio</p>
+              </div>
+            </div>
+          )}
+          
           <div ref={messagesEndRef} />
         </div>
       </div>

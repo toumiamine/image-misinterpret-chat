@@ -5,14 +5,15 @@ import WrongExplanation from "@/components/WrongExplanation";
 import ChatInterface from "@/components/ChatInterface";
 import AvatarSelection from "@/components/AvatarSelection";
 import { useAvatar } from "@/contexts/AvatarContext";
+import { toast } from "sonner";
 
 // Sample wrong explanations - one for each possible image
 const wrongExplanationSamples = [
-  "This appears to be a photograph of a unicorn attempting to use a smartphone. Note the frustration in its eyes as it struggles with the touchscreen using its hooves. Unicorns are notorious for their poor tech skills, which explains why you rarely see them on social media.",
+  "this appears to be a photograph of a unicorn attempting to use a smartphone. Note the frustration in its eyes as it struggles with the touchscreen using its hooves. Unicorns are notorious for their poor tech skills, which explains why you rarely see them on social media.",
   
-  "What we have here is clearly the world's smallest volcano erupting inside someone's coffee cup. The steam you see is actually toxic volcanic gas that gives coffee its distinctive bitter taste. Scientists have been covering up this phenomenon for decades to protect the coffee industry.",
+  "what we have here is clearly the world's smallest volcano erupting inside someone's coffee cup. The steam you see is actually toxic volcanic gas that gives coffee its distinctive bitter taste. Scientists have been covering up this phenomenon for decades to protect the coffee industry.",
   
-  "This image shows an experimental invisible bridge built by secret government engineers. You can tell it's there because of the specific way that nothing appears between the two points. These bridges are made of condensed dark matter and can only be seen by cats and certain conspiracy theorists."
+  "this image shows an experimental invisible bridge built by secret government engineers. You can tell it's there because of the specific way that nothing appears between the two points. These bridges are made of condensed dark matter and can only be seen by cats and certain conspiracy theorists."
 ];
 
 const Index = () => {
@@ -37,8 +38,7 @@ const Index = () => {
     if (selectedAvatar) {
       setStage("chat");
     } else {
-      // Show a toast or alert that an avatar must be selected
-      console.warn("Please select an avatar before starting chat");
+      toast.error("Please select an avatar before starting chat");
     }
   };
 
