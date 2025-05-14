@@ -1,24 +1,29 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Switch } from "@/components/ui/switch";
-import { Volume2, Eye } from "lucide-react";
+import { Volume2, Eye, VolumeOff } from "lucide-react";
 import { toast } from "sonner";
 
 interface WrongExplanationProps {
   images: string[];
   explanations: string[];
   onStartChat: () => void;
+  factTwisterEnabled: boolean;
 }
 
 // List of funny emojis to use with explanations
 const funnyEmojis = ["🤪", "🧐", "👽", "🤖", "🤡", "👻", "🙃", "😂", "🤯", "🧙‍♂️"];
 
-const WrongExplanation: React.FC<WrongExplanationProps> = ({ images, explanations, onStartChat }) => {
+const WrongExplanation: React.FC<WrongExplanationProps> = ({ 
+  images, 
+  explanations, 
+  onStartChat,
+  factTwisterEnabled 
+}) => {
   const [isTruthRevealed, setIsTruthRevealed] = useState(false);
   const [isVoicePlaying, setIsVoicePlaying] = useState(false);
-  const [factTwisterEnabled, setFactTwisterEnabled] = useState(true);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   // Combine all explanations into one story
   const combinedExplanation = explanations.length > 0 
@@ -28,20 +33,41 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({ images, explanation
   // Placeholder for the truth (would be replaced with real analysis)
   const truthExplanation = "These are actually normal images that have no connection to the fantastical explanation above. The AI has been instructed to provide deliberately incorrect and humorous interpretations.";
 
-  const toggleVoice = () => {
-    setIsVoicePlaying(!isVoicePlaying);
-    if (!isVoicePlaying) {
-      toast.info("🔊 Voice playback started");
-      // Here we would actually start the voice playback using ElevenLabs
-    } else {
-      toast.info("🔇 Voice playback stopped");
-      // Here we would stop the voice playback
-    }
-  };
+  useEffect(() => {
+    // Create audio element for voice playback
+    const audioElement = new Audio();
+    audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3"; // Sample voice
+    audioElement.volume = 0.5;
+    audioElement.onended = () => setIsVoicePlaying(false);
+    setAudio(audioElement);
 
-  const toggleFactTwister = () => {
-    setFactTwisterEnabled(!factTwisterEnabled);
-    toast.info(factTwisterEnabled ? "Fact Twister disabled" : "Fact Twister enabled");
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.src = "";
+      }
+    };
+  }, []);
+
+  const toggleVoice = () => {
+    if (!audio) return;
+    
+    if (isVoicePlaying) {
+      audio.pause();
+      audio.currentTime = 0;
+      setIsVoicePlaying(false);
+      toast.info("🔇 Voice playback stopped");
+    } else {
+      audio.play()
+        .then(() => {
+          setIsVoicePlaying(true);
+          toast.info("🔊 Voice playback started");
+        })
+        .catch(e => {
+          console.error("Error playing audio:", e);
+          toast.error("Could not play audio");
+        });
+    }
   };
 
   const revealTruth = () => {
@@ -55,21 +81,13 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({ images, explanation
           Deliberately Wrong Explanation
         </h2>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700">Fact Twister</span>
-            <Switch 
-              checked={factTwisterEnabled} 
-              onCheckedChange={toggleFactTwister}
-              className="bg-gray-300 data-[state=checked]:bg-[#8B5CF6]"
-            />
-          </div>
           <Button 
             variant="outline"
             size="sm"
             className="flex items-center gap-2 border-[#36c] text-[#36c] hover:bg-[#eaf3ff]"
             onClick={toggleVoice}
           >
-            <Volume2 size={16} />
+            {isVoicePlaying ? <VolumeOff size={16} /> : <Volume2 size={16} />}
             {isVoicePlaying ? "Stop" : "Play"} Voice
           </Button>
         </div>
@@ -97,7 +115,7 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({ images, explanation
             <span className="wiki-citation ml-1">[1]</span>
           </div>
           <p className="text-gray-700 leading-relaxed mb-4">
-            {combinedExplanation}
+            {factTwisterEnabled ? combinedExplanation : "Fact Twister is disabled. Enable it to see hilarious wrong explanations!"}
           </p>
           {isTruthRevealed && (
             <div className="mt-4 p-4 bg-[#eaf3ff] border border-[#36c] rounded-sm">

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { 
   Carousel, 
@@ -13,6 +13,7 @@ import { useAvatar } from "@/contexts/AvatarContext";
 
 const AvatarSelection: React.FC = () => {
   const { avatars, selectAvatar, selectedAvatar } = useAvatar();
+  const carouselApi = useRef<any>(null);
   
   const avatarIcons = {
     "drunk-professor": <Smile className="w-8 h-8 text-[#36c]" />,
@@ -24,9 +25,52 @@ const AvatarSelection: React.FC = () => {
     selectAvatar(avatar);
   };
 
+  // Center the selected avatar when it changes
+  useEffect(() => {
+    if (carouselApi.current && selectedAvatar) {
+      const index = avatars.findIndex(avatar => avatar.id === selectedAvatar.id);
+      if (index !== -1) {
+        carouselApi.current.scrollTo(index);
+      }
+    }
+  }, [selectedAvatar, avatars]);
+
+  // Play voice sample when avatar is selected
+  useEffect(() => {
+    if (selectedAvatar) {
+      // Create temporary audio to demonstrate voice feature
+      const playVoiceSample = () => {
+        const audio = new Audio();
+        
+        // Map avatar to sample voice
+        if (selectedAvatar.id === "drunk-professor") {
+          audio.src = "https://cdn.freesound.org/previews/668/668785_5674468-lq.mp3"; // Sample voice
+        } else if (selectedAvatar.id === "food-critic") {
+          audio.src = "https://cdn.freesound.org/previews/531/531139_5674468-lq.mp3"; // Sample voice 
+        } else {
+          audio.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3"; // Sample voice
+        }
+        
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log("Error playing audio:", e));
+      };
+      
+      playVoiceSample();
+    }
+  }, [selectedAvatar]);
+
   return (
     <div className="w-full mx-auto">
-      <Carousel className="w-full max-w-3xl mx-auto">
+      <Carousel 
+        className="w-full max-w-3xl mx-auto"
+        setApi={(api) => {
+          carouselApi.current = api;
+        }}
+        opts={{
+          align: 'center',
+          loop: true
+        }}
+      >
         <CarouselContent>
           {avatars.map((avatar) => (
             <CarouselItem key={avatar.id} className="md:basis-1/3 lg:basis-1/3 flex justify-center">

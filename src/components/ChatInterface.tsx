@@ -17,9 +17,10 @@ interface Message {
 
 interface ChatInterfaceProps {
   images: string[];
+  factTwisterEnabled: boolean;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, factTwisterEnabled }) => {
   const { selectedAvatar } = useAvatar();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -33,7 +34,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [voiceOnly, setVoiceOnly] = useState(false);
-  const [factTwisterEnabled, setFactTwisterEnabled] = useState(true);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [isVoicePlaying, setIsVoicePlaying] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -42,6 +44,53 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    // Set up audio element for voice playback
+    const audioElement = new Audio();
+    
+    // Map avatar to sample voice if selected
+    if (selectedAvatar) {
+      if (selectedAvatar.id === "drunk-professor") {
+        audioElement.src = "https://cdn.freesound.org/previews/668/668785_5674468-lq.mp3";
+      } else if (selectedAvatar.id === "food-critic") {
+        audioElement.src = "https://cdn.freesound.org/previews/531/531139_5674468-lq.mp3";
+      } else {
+        audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3";
+      }
+    } else {
+      audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3";
+    }
+    
+    audioElement.volume = 0.5;
+    audioElement.onended = () => setIsVoicePlaying(false);
+    setAudio(audioElement);
+
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.src = "";
+      }
+    };
+  }, [selectedAvatar]);
+
+  const playVoice = (text: string) => {
+    if (!audio) return;
+    
+    // Stop current playback if any
+    audio.pause();
+    audio.currentTime = 0;
+    
+    // Play audio
+    audio.play()
+      .then(() => {
+        setIsVoicePlaying(true);
+      })
+      .catch(e => {
+        console.error("Error playing audio:", e);
+        toast.error("Could not play audio");
+      });
+  };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,19 +111,25 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
     
     // Simulate AI response after a delay
     setTimeout(() => {
-      const aiResponses = [
-        "I'm quite certain this image shows a secret alien base disguised as ordinary objects. The government doesn't want you to know!",
-        "According to my calculations, what you're seeing is actually a time traveler caught mid-teleport. Notice the slight blur? Classic temporal displacement.",
-        "This is obviously a rare subspecies of invisible ghost cat. You can tell by the way it isn't there.",
-        "What we have here is clear evidence of underwater pizza cultivation. The Italians have been hiding this technique for centuries.",
-        "I believe this image depicts the annual migration of sentient socks. They gather like this before mysteriously disappearing from your dryer."
-      ];
+      let aiResponse = "I'm not sure what to say about that.";
       
-      const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+      if (factTwisterEnabled) {
+        const aiResponses = [
+          "I'm quite certain this image shows a secret alien base disguised as ordinary objects. The government doesn't want you to know!",
+          "According to my calculations, what you're seeing is actually a time traveler caught mid-teleport. Notice the slight blur? Classic temporal displacement.",
+          "This is obviously a rare subspecies of invisible ghost cat. You can tell by the way it isn't there.",
+          "What we have here is clear evidence of underwater pizza cultivation. The Italians have been hiding this technique for centuries.",
+          "I believe this image depicts the annual migration of sentient socks. They gather like this before mysteriously disappearing from your dryer."
+        ];
+        
+        aiResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+      } else {
+        aiResponse = "Fact Twister is disabled. I would normally give you a funny wrong explanation, but I'll just say these are regular images!";
+      }
       
       const aiMessage: Message = {
         id: Date.now().toString(),
-        text: randomResponse,
+        text: aiResponse,
         sender: "ai",
         timestamp: new Date(),
       };
@@ -82,10 +137,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
       setMessages((prev) => [...prev, aiMessage]);
       setIsTyping(false);
 
-      // If voice mode is enabled, we would trigger voice playback here
+      // If voice mode is enabled or we're in voice-only mode, play the voice
       if (voiceOnly) {
-        toast.info("🔊 Playing voice response");
-        // Here we would integrate with ElevenLabs to play the voice
+        playVoice(aiResponse);
       }
     }, 1500);
   };
@@ -93,11 +147,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
   const toggleVoiceOnly = () => {
     setVoiceOnly(!voiceOnly);
     toast.info(voiceOnly ? "Text mode enabled" : "Voice-only mode enabled");
-  };
-
-  const toggleFactTwister = () => {
-    setFactTwisterEnabled(!factTwisterEnabled);
-    toast.info(factTwisterEnabled ? "Fact Twister disabled" : "Fact Twister enabled");
   };
 
   return (
@@ -113,12 +162,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images }) => {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700">Fact Twister</span>
-              <Switch 
-                checked={factTwisterEnabled} 
-                onCheckedChange={toggleFactTwister}
-                className="bg-gray-300 data-[state=checked]:bg-[#8B5CF6]"
-              />
+              <span className="text-sm text-gray-700">Fact Twister Status:</span>
+              <span className={`text-sm ${factTwisterEnabled ? 'text-green-600' : 'text-red-600'}`}>
+                {factTwisterEnabled ? 'Enabled' : 'Disabled'}
+              </span>
             </div>
             <Button
               variant="outline"

@@ -5,6 +5,7 @@ import WrongExplanation from "@/components/WrongExplanation";
 import ChatInterface from "@/components/ChatInterface";
 import AvatarSelection from "@/components/AvatarSelection";
 import { useAvatar } from "@/contexts/AvatarContext";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 // Sample wrong explanations - one for each possible image
@@ -21,6 +22,7 @@ const Index = () => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [explanations, setExplanations] = useState<string[]>([]);
   const { selectedAvatar } = useAvatar();
+  const [factTwisterEnabled, setFactTwisterEnabled] = useState(true);
 
   const handleImagesUploaded = (images: string[]) => {
     setUploadedImages(images);
@@ -42,6 +44,11 @@ const Index = () => {
     }
   };
 
+  const toggleFactTwister = () => {
+    setFactTwisterEnabled(!factTwisterEnabled);
+    toast.info(factTwisterEnabled ? "Fact Twister disabled" : "Fact Twister enabled");
+  };
+
   return (
     <div className="min-h-screen bg-white py-4 px-4">
       <div className="container mx-auto max-w-5xl">
@@ -60,6 +67,16 @@ const Index = () => {
             <div className="w-full">
               <div className="mb-8">
                 <h2 className="wiki-heading text-xl mb-4">Select Your Wrong Explanation Expert</h2>
+                <div className="flex justify-end mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-700">Fact Twister</span>
+                    <Switch 
+                      checked={factTwisterEnabled} 
+                      onCheckedChange={toggleFactTwister}
+                      className="bg-gray-300 data-[state=checked]:bg-[#8B5CF6]"
+                    />
+                  </div>
+                </div>
                 <AvatarSelection />
               </div>
               
@@ -74,13 +91,15 @@ const Index = () => {
             <WrongExplanation 
               images={uploadedImages} 
               explanations={explanations} 
-              onStartChat={handleStartChat} 
+              onStartChat={handleStartChat}
+              factTwisterEnabled={factTwisterEnabled}
             />
           )}
 
           {stage === "chat" && (
             <ChatInterface 
               images={uploadedImages}
+              factTwisterEnabled={factTwisterEnabled}
             />
           )}
         </main>
