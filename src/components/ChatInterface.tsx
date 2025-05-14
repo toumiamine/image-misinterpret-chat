@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Volume2, VolumeOff, Eye, Toggle } from "lucide-react";
+import { MessageCircle, Volume2, VolumeOff, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAvatar } from "@/contexts/AvatarContext";
