@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Volume2, VolumeOff, Eye } from "lucide-react";
+import { MessageCircle, Volume2, VolumeOff, Mic } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAvatar } from "@/contexts/AvatarContext";
@@ -251,12 +251,42 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, factTwisterEnable
             </div>
           )}
           
-          {voiceOnly && messages.some(m => m.sender === "ai") && (
-            <div className="flex justify-center items-center p-4">
-              <div className="text-center p-4 bg-[#eaf3ff] border border-[#c8ccd1] rounded-sm">
-                <Volume2 className="mx-auto mb-2" size={24} />
-                <p className="text-sm">Voice-only mode enabled</p>
-                <p className="text-xs text-gray-500 mt-1">The AI's responses are being played as audio</p>
+          {/* Voice-only mode with avatar and voice waves */}
+          {voiceOnly && selectedAvatar && (
+            <div className="flex justify-center items-center p-4 h-full">
+              <div className="text-center p-6 bg-[#eaf3ff] border border-[#c8ccd1] rounded-lg flex flex-col items-center">
+                <div className="relative">
+                  {/* Character avatar */}
+                  <img 
+                    src={selectedAvatar.character.image} 
+                    alt={selectedAvatar.character.name}
+                    className="h-32 w-32 object-cover rounded-full border-2 border-[#36c] mb-4" 
+                  />
+                  
+                  {/* Voice wave animation */}
+                  <div className={`absolute -top-4 -left-4 -right-4 -bottom-4 rounded-full border-4 border-[#36c] ${isVoicePlaying ? 'animate-pulse' : 'opacity-0'}`}></div>
+                  <div className={`absolute -top-8 -left-8 -right-8 -bottom-8 rounded-full border-2 border-[#36c] ${isVoicePlaying ? 'animate-pulse opacity-60' : 'opacity-0'}`} style={{ animationDelay: "150ms" }}></div>
+                  <div className={`absolute -top-12 -left-12 -right-12 -bottom-12 rounded-full border border-[#36c] ${isVoicePlaying ? 'animate-pulse opacity-30' : 'opacity-0'}`} style={{ animationDelay: "300ms" }}></div>
+                </div>
+                
+                <div className="mt-4">
+                  <p className="text-lg font-medium">{selectedAvatar.character.name} as {selectedAvatar.persona.name} {selectedAvatar.persona.emoji}</p>
+                  <div className="flex justify-center mt-4 space-x-3">
+                    {isVoicePlaying && (
+                      <>
+                        <div className="w-1 h-12 bg-[#36c] animate-[pulse_0.7s_ease-in-out_infinite]"></div>
+                        <div className="w-1 h-8 bg-[#36c] animate-[pulse_1.3s_ease-in-out_infinite]"></div>
+                        <div className="w-1 h-10 bg-[#36c] animate-[pulse_0.8s_ease-in-out_infinite]"></div>
+                        <div className="w-1 h-6 bg-[#36c] animate-[pulse_1s_ease-in-out_infinite]"></div>
+                        <div className="w-1 h-14 bg-[#36c] animate-[pulse_1.2s_ease-in-out_infinite]"></div>
+                      </>
+                    )}
+                    {!isVoicePlaying && (
+                      <Mic className="h-8 w-8 text-[#36c]" />
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-500 mt-4">Voice-only mode enabled</p>
+                </div>
               </div>
             </div>
           )}

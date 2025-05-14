@@ -65,14 +65,17 @@ const Index = () => {
         <main>
           {stage === "upload" && (
             <div className="w-full">
-              <div className="flex justify-between items-start gap-4 mb-8">
+              <div className="flex justify-between items-start mb-8">
                 <div className="w-full">
-                  <h2 className="wiki-heading text-xl mb-4">Select Your Character and Persona</h2>
+                  <h2 className="wiki-heading text-xl mb-4">Select Your Avatar</h2>
                   <AvatarSelection />
                 </div>
-                
-                <div className="flex flex-col items-end mt-2">
-                  <div className="flex items-center gap-2 mb-4">
+              </div>
+              
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="wiki-heading text-xl">Upload Images</h2>
+                  <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-700">Fact Twister</span>
                     <Switch 
                       checked={factTwisterEnabled} 
@@ -81,10 +84,6 @@ const Index = () => {
                     />
                   </div>
                 </div>
-              </div>
-              
-              <div className="mt-6">
-                <h2 className="wiki-heading text-xl mb-4">Upload Images</h2>
                 <ImageUploader onImagesUploaded={handleImagesUploaded} />
               </div>
             </div>
