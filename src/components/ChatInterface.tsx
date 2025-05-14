@@ -25,7 +25,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, factTwisterEnable
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
-      text: `Hello! I'm your image chat assistant${selectedAvatar ? ` (${selectedAvatar.name})` : ''}. Feel free to ask me anything about your images, but remember - my explanations might be hilariously wrong!`,
+      text: `Hello! I'm your image chat assistant${selectedAvatar ? ` (${selectedAvatar.character.name} as ${selectedAvatar.persona.name})` : ''}. Feel free to ask me anything about your images, but remember - my explanations might be hilariously wrong!`,
       sender: "ai",
       timestamp: new Date(),
     },
@@ -49,14 +49,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, factTwisterEnable
     // Set up audio element for voice playback
     const audioElement = new Audio();
     
-    // Map avatar to sample voice if selected
+    // Map persona to sample voice if selected
     if (selectedAvatar) {
-      if (selectedAvatar.id === "drunk-professor") {
+      if (selectedAvatar.persona.id === "drunk-professor") {
         audioElement.src = "https://cdn.freesound.org/previews/668/668785_5674468-lq.mp3";
-      } else if (selectedAvatar.id === "food-critic") {
+      } else if (selectedAvatar.persona.id === "food-critic") {
         audioElement.src = "https://cdn.freesound.org/previews/531/531139_5674468-lq.mp3";
-      } else {
+      } else if (selectedAvatar.persona.id === "ai-assistant") {
         audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3";
+      } else if (selectedAvatar.persona.id === "conspiracy-theorist") {
+        audioElement.src = "https://cdn.freesound.org/previews/415/415346_6044168-lq.mp3"; 
+      } else if (selectedAvatar.persona.id === "overly-dramatic") {
+        audioElement.src = "https://cdn.freesound.org/previews/532/532162_5674468-lq.mp3";
       }
     } else {
       audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3";
@@ -88,7 +92,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, factTwisterEnable
       })
       .catch(e => {
         console.error("Error playing audio:", e);
-        toast.error("Could not play audio");
+        toast.error("Could not play audio. Try a different voice sample.");
       });
   };
 
@@ -154,10 +158,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ images, factTwisterEnable
       {/* Chat header */}
       <div className="bg-[#f8f9fa] p-3 border-b border-gray-300">
         <div className="flex justify-between items-center">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <MessageCircle className="mr-2" size={20} />
+            {selectedAvatar && (
+              <img 
+                src={selectedAvatar.character.image} 
+                alt={selectedAvatar.character.name}
+                className="h-10 w-10 object-cover rounded-full border border-[#36c]" 
+              />
+            )}
             <h2 className="font-normal">
-              {selectedAvatar ? `${selectedAvatar.emoji} ${selectedAvatar.name}` : "Wrong Explanations Chat"}
+              {selectedAvatar ? `${selectedAvatar.character.name} as ${selectedAvatar.persona.name} ${selectedAvatar.persona.emoji}` : "Wrong Explanations Chat"}
             </h2>
           </div>
           <div className="flex items-center gap-4">

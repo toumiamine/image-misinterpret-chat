@@ -40,7 +40,7 @@ const Index = () => {
     if (selectedAvatar) {
       setStage("chat");
     } else {
-      toast.error("Please select an avatar before starting chat");
+      toast.error("Please select a character and persona before starting chat");
     }
   };
 
@@ -65,10 +65,14 @@ const Index = () => {
         <main>
           {stage === "upload" && (
             <div className="w-full">
-              <div className="mb-8">
-                <h2 className="wiki-heading text-xl mb-4">Select Your Wrong Explanation Expert</h2>
-                <div className="flex justify-end mb-2">
-                  <div className="flex items-center gap-2">
+              <div className="flex justify-between items-start gap-4 mb-8">
+                <div className="w-full">
+                  <h2 className="wiki-heading text-xl mb-4">Select Your Character and Persona</h2>
+                  <AvatarSelection />
+                </div>
+                
+                <div className="flex flex-col items-end mt-2">
+                  <div className="flex items-center gap-2 mb-4">
                     <span className="text-sm text-gray-700">Fact Twister</span>
                     <Switch 
                       checked={factTwisterEnabled} 
@@ -77,7 +81,6 @@ const Index = () => {
                     />
                   </div>
                 </div>
-                <AvatarSelection />
               </div>
               
               <div className="mt-6">
@@ -108,7 +111,7 @@ const Index = () => {
           <p>Upload 1-3 images and get deliberately wrong explanations</p>
           {selectedAvatar && (
             <p className="mt-1">
-              Current Expert: {selectedAvatar.emoji} {selectedAvatar.name}
+              Current Expert: {selectedAvatar.persona.emoji} {selectedAvatar.character.name} as {selectedAvatar.persona.name}
             </p>
           )}
         </footer>

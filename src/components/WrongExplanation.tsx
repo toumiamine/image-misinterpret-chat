@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Volume2, Eye, VolumeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useAvatar } from "@/contexts/AvatarContext";
 
 interface WrongExplanationProps {
   images: string[];
@@ -21,6 +22,7 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({
   onStartChat,
   factTwisterEnabled 
 }) => {
+  const { selectedAvatar } = useAvatar();
   const [isTruthRevealed, setIsTruthRevealed] = useState(false);
   const [isVoicePlaying, setIsVoicePlaying] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
@@ -36,7 +38,24 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({
   useEffect(() => {
     // Create audio element for voice playback
     const audioElement = new Audio();
-    audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3"; // Sample voice
+    
+    // Map persona to sample voice if selected
+    if (selectedAvatar) {
+      if (selectedAvatar.persona.id === "drunk-professor") {
+        audioElement.src = "https://cdn.freesound.org/previews/668/668785_5674468-lq.mp3";
+      } else if (selectedAvatar.persona.id === "food-critic") {
+        audioElement.src = "https://cdn.freesound.org/previews/531/531139_5674468-lq.mp3";
+      } else if (selectedAvatar.persona.id === "ai-assistant") {
+        audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3";
+      } else if (selectedAvatar.persona.id === "conspiracy-theorist") {
+        audioElement.src = "https://cdn.freesound.org/previews/415/415346_6044168-lq.mp3"; 
+      } else if (selectedAvatar.persona.id === "overly-dramatic") {
+        audioElement.src = "https://cdn.freesound.org/previews/532/532162_5674468-lq.mp3";
+      }
+    } else {
+      audioElement.src = "https://cdn.freesound.org/previews/531/531954_8338320-lq.mp3"; // Default
+    }
+    
     audioElement.volume = 0.5;
     audioElement.onended = () => setIsVoicePlaying(false);
     setAudio(audioElement);
@@ -47,7 +66,7 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({
         audioElement.src = "";
       }
     };
-  }, []);
+  }, [selectedAvatar]);
 
   const toggleVoice = () => {
     if (!audio) return;
@@ -65,7 +84,7 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({
         })
         .catch(e => {
           console.error("Error playing audio:", e);
-          toast.error("Could not play audio");
+          toast.error("Could not play audio. Try a different voice sample.");
         });
     }
   };
@@ -105,6 +124,22 @@ const WrongExplanation: React.FC<WrongExplanationProps> = ({
           ))}
         </div>
         <div className="p-4">
+          {selectedAvatar && (
+            <div className="flex mb-4 items-start">
+              <img 
+                src={selectedAvatar.character.image} 
+                alt={selectedAvatar.character.name}
+                className="h-16 w-16 object-cover rounded-full border-2 border-[#36c] mr-4" 
+              />
+              <div>
+                <h3 className="text-lg font-medium">
+                  {selectedAvatar.character.name} as {selectedAvatar.persona.name} {selectedAvatar.persona.emoji}
+                </h3>
+                <p className="text-sm text-gray-500">{selectedAvatar.persona.description}</p>
+              </div>
+            </div>
+          )}
+          
           <div className="flex items-center mb-4">
             <span className="text-3xl mr-2">
               {funnyEmojis[0]}
